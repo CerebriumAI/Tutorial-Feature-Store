@@ -1,6 +1,12 @@
+variable "region" {
+  type        = string
+  default     = "us-west-2"
+  description = "AWS region where to provision services"
+}
+
 variable "project_name" {
   type        = string
-  default     = "my-feast-project-aws"
+  default     = "my-feast-project-aws-cerebrium"
   description = "The project identifier is used to uniquely namespace resources"
 }
 
