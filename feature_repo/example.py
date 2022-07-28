@@ -1,5 +1,4 @@
 from datetime import timedelta
-
 from feast import (Entity, Feature, FeatureView, RedshiftSource,
                    ValueType)
 
