@@ -8,7 +8,7 @@ offline_store:
     type: redshift
     cluster_id: [SET YOUR CLUSTER ID]
     region: us-west-2
-    user: admin
     database: dev
-    s3_staging_location: [SET YOUR BUCKET]
+    user: admin
+    s3_staging_location: s3://[SET YOUR BUCKET NAME]
     iam_role: [SET YOUR ARN]
