@@ -16,7 +16,7 @@ transaction_features = FeatureView(
     ttl=timedelta(days=365),
     features=[
         Feature(name="ProductCD", dtype=ValueType.STRING),
-        Feature(name="TransactionAmt", dtype=ValueType.FLOAT),
+        Feature(name="TransactionAmt", dtype=ValueType.DOUBLE),
         Feature(name="P_emaildomain", dtype=ValueType.STRING),
         Feature(name="R_emaildomain", dtype=ValueType.STRING),
         Feature(name="card4", dtype=ValueType.STRING),

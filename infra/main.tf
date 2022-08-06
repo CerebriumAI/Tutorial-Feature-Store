@@ -134,7 +134,7 @@ resource "aws_glue_catalog_table" "transaction_features_table" {
     }
     columns {
       name = "M1"
-      type = "VARCHAR(128)"
+      type = "VARCHAR(8)"
     }
     columns {
       name = "M2"
