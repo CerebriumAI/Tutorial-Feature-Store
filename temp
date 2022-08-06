@@ -1,0 +1,20 @@
+fraud-classifier-redshift-cluster
+arn:aws:iam::288552132534:role/s3_spectrum_role
+transaction_features
+
+16571d19-dfa0-489d-ade2-60c6161258ce
+
+{
+    "ClusterIdentifier": "fraud-classifier-redshift-cluster",
+    "CreatedAt": "2022-08-04T12:58:03.610000+02:00",
+    "Duration": 551443697,
+    "HasResultSet": false,
+    "Id": "16571d19-dfa0-489d-ade2-60c6161258ce",
+    "QueryString": "create external schema spectrum from data catalog database 'dev' iam_role '' create external database if not exists;",
+    "RedshiftPid": 1073791282,
+    "RedshiftQueryId": -1,
+    "ResultRows": 0,
+    "ResultSize": 0,
+    "Status": "FINISHED",
+    "UpdatedAt": "2022-08-04T12:58:05.147000+02:00"
+}
