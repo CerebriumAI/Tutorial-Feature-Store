@@ -1,8 +1,7 @@
 from datetime import timedelta
-from feast import (Entity, Feature, FeatureView, RedshiftSource,
-                   ValueType)
+from feast import Entity, Feature, FeatureView, RedshiftSource, ValueType
 
-transaction = Entity(name="transactions", value_type=ValueType.STRING)
+transaction = Entity(name="transaction", value_type=ValueType.INT64)
 
 transaction_source = RedshiftSource(
     query="SELECT * FROM spectrum.transaction_features",
@@ -22,7 +21,7 @@ transaction_features = FeatureView(
         Feature(name="card4", dtype=ValueType.STRING),
         Feature(name="M1", dtype=ValueType.STRING),
         Feature(name="M2", dtype=ValueType.STRING),
-        Feature(name="M3", dtype=ValueType.STRING)
+        Feature(name="M3", dtype=ValueType.STRING),
     ],
     batch_source=transaction_source,
 )
