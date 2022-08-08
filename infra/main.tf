@@ -118,7 +118,7 @@ resource "aws_glue_catalog_table" "transaction_features_table" {
     }
     columns {
       name = "TransactionAmt"
-      type = "FLOAT"
+      type = "DOUBLE"
     }
     columns {
       name = "P_emaildomain"
@@ -154,7 +154,7 @@ resource "aws_glue_catalog_table" "transaction_features_table" {
     }
     columns {
       name = "isFraud"
-      type = "INT"
+      type = "BIGINT"
     }
   }
   depends_on = [
