@@ -113,23 +113,23 @@ resource "aws_glue_catalog_table" "transaction_features_table" {
     }
 
     columns {
-      name = "TransactionID"
+      name = "transactionid"
       type = "BIGINT"
     }
     columns {
-      name = "ProductCD"
+      name = "productcd"
       type = "VARCHAR(32)"
     }
     columns {
-      name = "TransactionAmt"
+      name = "transactionamt"
       type = "DOUBLE"
     }
     columns {
-      name = "P_emaildomain"
+      name = "p_emaildomain"
       type = "VARCHAR(64)"
     }
     columns {
-      name = "R_emaildomain"
+      name = "r_emaildomain"
       type = "VARCHAR(64)"
     }
     columns {
@@ -137,15 +137,15 @@ resource "aws_glue_catalog_table" "transaction_features_table" {
       type = "VARCHAR(32)"
     }
     columns {
-      name = "M1"
+      name = "m1"
       type = "VARCHAR(8)"
     }
     columns {
-      name = "M2"
+      name = "m2"
       type = "VARCHAR(8)"
     }
     columns {
-      name = "M3"
+      name = "m3"
       type = "VARCHAR(8)"
     }
     columns {
@@ -157,7 +157,7 @@ resource "aws_glue_catalog_table" "transaction_features_table" {
       type = "timestamp"
     }
     columns {
-      name = "isFraud"
+      name = "isfraud"
       type = "BIGINT"
     }
   }

@@ -9,30 +9,29 @@ from sklearn.preprocessing import OneHotEncoder
 from xgboost import XGBClassifier
 
 
-
 class FraudClassifierModel:
     categorical_features = [
-        "ProductCD",
-        "P_emaildomain",
-        "R_emaildomain",
+        "productcd",
+        "p_emaildomain",
+        "r_emaildomain",
         "card4",
-        "M1",
-        "M2",
-        "M3",
+        "m1",
+        "m2",
+        "m3",
     ]
 
     feast_features = [
-        "transaction_features:ProductCD",
-        "transaction_features:isFraud",
-        "transaction_features:P_emaildomain",
-        "transaction_features:R_emaildomain",
+        "transaction_features:productcd",
+        "transaction_features:transactionamt",
+        "transaction_features:p_emaildomain",
+        "transaction_features:r_emaildomain",
         "transaction_features:card4",
-        "transaction_features:M1",
-        "transaction_features:M2",
-        "transaction_features:M3"
+        "transaction_features:m1",
+        "transaction_features:m2",
+        "transaction_features:m3",
     ]
 
-    target = "isFraud"
+    target = "isfraud"
     model_filename = "fraud_model.joblib"
     encoder_filename = "encoder.joblib"
 
@@ -52,25 +51,21 @@ class FraudClassifierModel:
         # Set up feature store
         self.fs = feast.FeatureStore(repo_path="feature_repo")
 
-    def train(self, loans):
-        train_X, train_Y = self._get_training_features(loans)
+    def train(self, transactions):
+        train_X, train_Y = self._get_training_features(transactions)
 
         self.classifier.fit(train_X[sorted(train_X)], train_Y)
         joblib.dump(self.classifier, self.model_filename)
 
-    def _get_training_features(self, loans):
+    def _get_training_features(self, transactions):
         training_df = self.fs.get_historical_features(
-            entity_df=loans, features=self.feast_features
+            entity_df=transactions[["transactionid", "event_timestamp", "isfraud"]],
+            features=self.feast_features,
         ).to_df()
 
         self._fit_ohe_encoder(training_df)
-        self._apply_ohe_encoding(training_df)
+        train_X = self._apply_ohe_encoding(training_df)
 
-        train_X = training_df[
-            training_df.columns.drop(self.target)
-            .drop("event_timestamp")
-            .drop("created_timestamp")
-        ]
         train_X = train_X.reindex(sorted(train_X.columns), axis=1)
         train_Y = training_df.loc[:, self.target]
 
@@ -81,9 +76,12 @@ class FraudClassifierModel:
         joblib.dump(self.encoder, self.encoder_filename)
 
     def _apply_ohe_encoding(self, requests):
-        requests[self.categorical_features] = self.encoder.transform(
-            requests[self.categorical_features]
+        X = requests[self.categorical_features]
+        X = pd.DataFrame(
+            self.encoder.transform(X).toarray(), columns=self.encoder.get_feature_names_out().reshape(-1)
         )
+        X["transactionamt"] = requests[["transactionamt"]].to_numpy()
+        return X
 
     def predict(self, request):
         # Get online features from Feast
@@ -95,7 +93,7 @@ class FraudClassifierModel:
         features_df = pd.DataFrame.from_dict(features)
 
         # Apply ohe encoding to categorical features
-        self._apply_ohe_encoding(features_df)
+        features_df = self._apply_ohe_encoding(features_df)
 
         # Sort columns
         features_df = features_df.reindex(sorted(features_df.columns), axis=1)
@@ -107,10 +105,10 @@ class FraudClassifierModel:
         return features_df["prediction"].iloc[0]
 
     def _get_online_features_from_feast(self, request):
-        transaction = request["transaction"][0]
+        transaction = request["transactionid"][0]
 
         return self.fs.get_online_features(
-            entity_rows=[{"transaction": transaction}],
+            entity_rows=[{"transactionid": transaction}],
             features=self.feast_features,
         ).to_dict()
 

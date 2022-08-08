@@ -4,14 +4,14 @@ from feast import Entity, Feature, FeatureView, RedshiftSource, ValueType
 transaction = Entity(name="transactionid")
 
 transaction_source = RedshiftSource(
-    query="SELECT * FROM spectrum.transaction_features",
+    query=("SELECT * FROM spectrum.transaction_features"),
     event_timestamp_column="event_timestamp",
     created_timestamp_column="created_timestamp",
 )
 
 transaction_features = FeatureView(
     name="transaction_features",
-    entities=["TransactionID"],
+    entities=["transactionid"],
     ttl=timedelta(days=365),
     features=[
         Feature(name="productcd", dtype=ValueType.STRING),
