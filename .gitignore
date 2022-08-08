@@ -11,3 +11,4 @@ generate_data.py
 *.parquet
 *.csv
 .DS_Store
+*.joblib
