@@ -113,6 +113,10 @@ resource "aws_glue_catalog_table" "transaction_features_table" {
     }
 
     columns {
+      name = "TransactionID"
+      type = "BIGINT"
+    }
+    columns {
       name = "ProductCD"
       type = "VARCHAR(32)"
     }
