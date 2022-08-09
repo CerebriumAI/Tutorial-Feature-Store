@@ -4,22 +4,10 @@ resource "aws_s3_bucket" "feast_bucket" {
   force_destroy = true
 }
 
-resource "aws_s3_bucket_object" "zipcode_features_file_upload" {
+resource "aws_s3_bucket_object" "transaction_features_file_upload" {
   bucket = aws_s3_bucket.feast_bucket.bucket
-  key    = "zipcode_features/table.parquet"
-  source = "${path.module}/../data/zipcode_table.parquet"
-}
-
-resource "aws_s3_bucket_object" "credit_history_file_upload" {
-  bucket = aws_s3_bucket.feast_bucket.bucket
-  key    = "credit_history/table.parquet"
-  source = "${path.module}/../data/credit_history.parquet"
-}
-
-resource "aws_s3_bucket_object" "loan_features_file_upload" {
-  bucket = aws_s3_bucket.feast_bucket.bucket
-  key    = "loan_features/table.parquet"
-  source = "${path.module}/../data/loan_table.parquet"
+  key    = "transaction_features/table.parquet"
+  source = "${path.module}/../data/train_transaction.parquet"
 }
 
 resource "aws_iam_role" "s3_spectrum_role" {
@@ -99,8 +87,8 @@ resource "aws_glue_catalog_database" "glue_db" {
   name = var.database_name
 }
 
-resource "aws_glue_catalog_table" "zipcode_features_table" {
-  name          = "zipcode_features"
+resource "aws_glue_catalog_table" "transaction_features_table" {
+  name          = "transaction_features"
   database_name = var.database_name
 
   table_type = "EXTERNAL_TABLE"
@@ -111,7 +99,7 @@ resource "aws_glue_catalog_table" "zipcode_features_table" {
   }
 
   storage_descriptor {
-    location      = "s3://${aws_s3_bucket.feast_bucket.bucket}/zipcode_features/"
+    location      = "s3://${aws_s3_bucket.feast_bucket.bucket}/transaction_features/"
     input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
     output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
 
@@ -125,33 +113,40 @@ resource "aws_glue_catalog_table" "zipcode_features_table" {
     }
 
     columns {
-      name = "zipcode"
-      type = "BIGINT"
-    }
-
-    columns {
-      name = "city"
-      type = "VARCHAR(128)"
-    }
-    columns {
-      name = "state"
-      type = "VARCHAR(128)"
-    }
-    columns {
-      name = "location_type"
-      type = "VARCHAR(128)"
-    }
-    columns {
-      name = "tax_returns_filed"
+      name = "transactionid"
       type = "BIGINT"
     }
     columns {
-      name = "population"
-      type = "BIGINT"
+      name = "productcd"
+      type = "VARCHAR(32)"
     }
     columns {
-      name = "total_wages"
-      type = "BIGINT"
+      name = "transactionamt"
+      type = "DOUBLE"
+    }
+    columns {
+      name = "p_emaildomain"
+      type = "VARCHAR(64)"
+    }
+    columns {
+      name = "r_emaildomain"
+      type = "VARCHAR(64)"
+    }
+    columns {
+      name = "card4"
+      type = "VARCHAR(32)"
+    }
+    columns {
+      name = "m1"
+      type = "VARCHAR(8)"
+    }
+    columns {
+      name = "m2"
+      type = "VARCHAR(8)"
+    }
+    columns {
+      name = "m3"
+      type = "VARCHAR(8)"
     }
     columns {
       name = "event_timestamp"
@@ -161,84 +156,9 @@ resource "aws_glue_catalog_table" "zipcode_features_table" {
       name = "created_timestamp"
       type = "timestamp"
     }
-  }
-  depends_on = [
-    resource.aws_glue_catalog_database.glue_db
-  ]
-}
-
-resource "aws_glue_catalog_table" "credit_history_table" {
-  name          = "credit_history"
-  database_name = var.database_name
-
-  table_type = "EXTERNAL_TABLE"
-
-  parameters = {
-    EXTERNAL              = "TRUE"
-    "parquet.compression" = "SNAPPY"
-  }
-
-  storage_descriptor {
-    location      = "s3://${aws_s3_bucket.feast_bucket.bucket}/credit_history/"
-    input_format  = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat"
-    output_format = "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat"
-
-    ser_de_info {
-      name                  = "my-stream"
-      serialization_library = "org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe"
-
-      parameters = {
-        "serialization.format" = 1
-      }
-    }
     columns {
-      name = "dob_ssn"
-      type = "VARCHAR(13)"
-    }
-
-    columns {
-      name = "credit_card_due"
+      name = "isfraud"
       type = "BIGINT"
-    }
-    columns {
-      name = "mortgage_due"
-      type = "BIGINT"
-    }
-    columns {
-      name = "student_loan_due"
-      type = "BIGINT"
-    }
-    columns {
-      name = "vehicle_loan_due"
-      type = "BIGINT"
-    }
-    columns {
-      name = "hard_pulls"
-      type = "BIGINT"
-    }
-    columns {
-      name = "missed_payments_2y"
-      type = "BIGINT"
-    }
-    columns {
-      name = "missed_payments_1y"
-      type = "BIGINT"
-    }
-    columns {
-      name = "missed_payments_6m"
-      type = "BIGINT"
-    }
-    columns {
-      name = "bankruptcies"
-      type = "BIGINT"
-    }
-    columns {
-      name = "event_timestamp"
-      type = "timestamp"
-    }
-    columns {
-      name = "created_timestamp"
-      type = "timestamp"
     }
   }
   depends_on = [
