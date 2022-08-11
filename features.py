@@ -12,7 +12,7 @@ transaction_source = RedshiftSource(
 transaction_features = FeatureView(
     name="transaction_features",
     entities=["transactionid"],
-    ttl=timedelta(days=365),
+    ttl=timedelta(days=30),
     features=[
         Feature(name="productcd", dtype=ValueType.STRING),
         Feature(name="transactionamt", dtype=ValueType.DOUBLE),
